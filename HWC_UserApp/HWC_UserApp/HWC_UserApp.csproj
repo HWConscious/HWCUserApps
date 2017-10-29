@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+	<PackageTargetFallback>portable-net45+win8+wpa81+wp8</PackageTargetFallback>
+	<Company>HWConscious</Company>
+	<Authors>HWConscious</Authors>
+	<Description>UserApp base project</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="App.xaml" />
+    <None Remove="UserApp\MediaFiles\barcodes\09876543210-barcode.png" />
+    <None Remove="UserApp\MediaFiles\barcodes\92186293264-barcode.png" />
+    <None Remove="UserApp\MediaFiles\barcodes\barcode_09876543210.png" />
+    <None Remove="UserApp\MediaFiles\barcodes\barcode_92186293264.png" />
+    <None Remove="UserApp\MediaFiles\barcodes\barcode_97294957293.png" />
+    <None Remove="UserApp\MediaFiles\logo_hwc_large.png" />
+    <None Remove="UserApp\MediaFiles\logo_hwc_medium.png" />
+    <None Remove="ViewCells\CouponViewCell.xaml" />
+    <None Remove="ViewCells\GenericBeaconViewCell.xaml" />
+    <None Remove="ViewCells\IBeaconViewCell.xaml" />
+    <None Remove="Views\HomeView.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="App.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserApp\MediaFiles\barcodes\barcode_09876543210.png" />
+    <EmbeddedResource Include="UserApp\MediaFiles\barcodes\barcode_92186293264.png" />
+    <EmbeddedResource Include="UserApp\MediaFiles\barcodes\barcode_97294957293.png" />
+    <EmbeddedResource Include="UserApp\MediaFiles\icon_coupon.png" />
+    <EmbeddedResource Include="UserApp\MediaFiles\logo_hwc_large.png" />
+    <EmbeddedResource Include="UserApp\MediaFiles\logo_hwc_medium.png" />
+    <EmbeddedResource Include="ViewCells\CouponViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewCells\GenericBeaconViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewCells\IBeaconViewCell.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\HomeView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="opennetcf-ioc-standard" Version="1.0.17213" />
+    <PackageReference Include="UniversalBeaconLibrary" Version="3.2.0" />
+    <PackageReference Include="Xamarin.Forms" Version="2.3.4.270" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="App.xaml.cs">
+	  <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="ViewCells\CouponViewCell.xaml.cs">
+	  <DependentUpon>ViewCells\CouponViewCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="ViewCells\GenericBeaconViewCell.xaml.cs">
+	  <DependentUpon>ViewCells\GenericBeaconViewCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="ViewCells\IBeaconViewCell.xaml.cs">
+	  <DependentUpon>ViewCells\IBeaconViewCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\HomeView.xaml.cs">
+	  <DependentUpon>Views\HomeView.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Update="NETStandard.Library" Version="1.6.1" />
+  </ItemGroup>
+
+</Project>

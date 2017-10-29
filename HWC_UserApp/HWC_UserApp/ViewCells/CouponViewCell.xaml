@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HWC_UserApp.UserApp.Models"
+             x:Class="HWC_UserApp.ViewCells.CouponViewCell">
+
+    <Grid Padding="15, 10, 15, 10" BackgroundColor="White">
+        <Grid BackgroundColor="#474747">
+            <Grid Margin="1" BackgroundColor="#1F1F1F" HeightRequest="200" WidthRequest="400">
+                <Grid RowSpacing="0" ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="35" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Row="0" Grid.Column="0" BackgroundColor="#D30049"></Grid>
+                    <Grid Grid.Row="1" Grid.Column="0" BackgroundColor="#D30049">
+                        <Label Text="COUPON" FontSize="20" FontAttributes="Bold" TextColor="WhiteSmoke" LineBreakMode="CharacterWrap" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="18" />
+                    </Grid>
+
+                    <Grid Grid.Row="0" Grid.Column="1" BackgroundColor="Gold"></Grid>
+                    <Grid Grid.Row="1" Grid.Column="1" Margin="15">
+                        <Grid RowSpacing="0" ColumnSpacing="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="14" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Image x:Name="_couponIconImage" Grid.Row="0" HorizontalOptions="End" VerticalOptions="Start" Margin="0, 0, 0, -46" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.icon_coupon.png}" />
+                            <Grid Grid.Row="1" RowSpacing="0" ColumnSpacing="0" BackgroundColor="Transparent">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="60" />
+                                </Grid.RowDefinitions>
+                                
+                                <Grid Grid.Row="0">
+                                    <Label Text="{Binding Description}" FontSize="35" FontAttributes="Bold" TextColor="White" LineBreakMode="TailTruncation" VerticalTextAlignment="Center" />
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Label Text="{Binding Name}" FontSize="25" FontAttributes="None" TextColor="#F1F1F1" LineBreakMode="TailTruncation" VerticalTextAlignment="Start" />
+                                </Grid>
+                                <Grid Grid.Row="2" BackgroundColor="#4C4C4C">
+                                    <StackLayout Orientation="Horizontal" Padding="0" Spacing="0">
+                                        <Label Text="COUPON CODE" Margin="5, 0, 0, 0" FontSize="15" FontAttributes="None" TextColor="WhiteSmoke" LineBreakMode="WordWrap" HorizontalTextAlignment="End" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" />
+                                        <!--<Label Text="{Binding CouponCode}" Margin="0, 0, 10, 3" FontSize="35" FontAttributes="Bold" TextColor="White" LineBreakMode="TailTruncation" HorizontalTextAlignment="End" VerticalTextAlignment="Center" HorizontalOptions="EndAndExpand" VerticalOptions="Center" />-->
+                                        <Frame Margin="5" Padding="1" HorizontalOptions="EndAndExpand" VerticalOptions="Center" HasShadow="True" BackgroundColor="Silver" OutlineColor="Silver">
+                                            <Image x:Name="_barcodeImage" Source="{Binding BarcodeImageResource}" />
+                                        </Frame>
+                                    </StackLayout>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+    
+</ViewCell>

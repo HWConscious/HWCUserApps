@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:HWC_UserApp.UserApp.Models"
+             x:Class="HWC_UserApp.Views.HomeView">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:ViewCellTemplateSelector x:Key="ViewCellTemplateSelector" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <ContentPage.Content>
+
+        <Grid x:Name="_rootContainerGrid">
+            
+            <Grid x:Name="_defaultContainerGrid" Opacity="0">
+                <Image x:Name="_defaultLogoImage" HorizontalOptions="Center" VerticalOptions="Center" Margin="20" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_large.png}" />
+            </Grid>
+
+            <Grid x:Name="_couponListContainerGrid" Opacity="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                
+                <ListView x:Name="_couponListView" Grid.Row="0"
+                    ItemTemplate="{StaticResource ViewCellTemplateSelector}"
+                    ItemsSource="{Binding ReceivedCoupons}"
+                    HasUnevenRows="True">
+                    <ListView.Header>
+                        <Grid>
+                            <Label Text="My Coupons" TextColor="#6A6A6A" FontSize="Large" Margin="20, 20, 0, 5" />        
+                        </Grid>
+                    </ListView.Header>
+                </ListView>
+                <Image x:Name="_bottomLogoImage" Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center" Margin="3" TranslationY="110" Opacity="0" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_medium.png}" />
+            </Grid>
+
+        </Grid>
+
+    </ContentPage.Content>
+
+</ContentPage>
