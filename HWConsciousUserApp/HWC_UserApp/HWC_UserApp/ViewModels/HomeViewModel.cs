@@ -24,7 +24,7 @@ namespace HWC_UserApp.ViewModels
         private RestClient _userLocationRestClient { get; set; }
         private BeaconService _beaconService { get; set; }
         private IBluetoothPacketProvider _bluetoothPacketProvider { get; set; }
-        private readonly bool _isSimulateBeaconData = true;
+        private readonly bool _isSimulateBeaconData = false;
         private readonly bool _isSimulateCouponData = false;
         
         public ObservableCollection<Beacon> Beacons => _beaconService?.Beacons;
