@@ -12,10 +12,27 @@
     
     <ContentPage.Content>
 
-        <Grid x:Name="_rootContainerGrid">
+        <Grid x:Name="_rootContainerGrid" BackgroundColor="White">
             
             <Grid x:Name="_defaultContainerGrid" Opacity="0">
-                <Image x:Name="_defaultLogoImage" HorizontalOptions="Center" VerticalOptions="Center" Margin="20" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_large.png}" />
+                <RelativeLayout>
+                    <WebView x:Name="_defaultScanning" IsEnabled="False" Opacity="0"
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultLogoImage, Property=Width, Factor=0.3, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultLogoImage, Property=Height, Factor=0.9, Constant=0}"
+                        RelativeLayout.XConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultLogoImage, Property=X, Factor=1, Constant=0}"
+                        RelativeLayout.YConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultLogoImage, Property=Y, Factor=1, Constant=0}"
+                    />
+                    <BoxView x:Name="_defaultScanningTransparentLayer" Opacity="0" Color="White"
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultScanning, Property=Width, Factor=1, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultScanning, Property=Height, Factor=1, Constant=0}"
+                        RelativeLayout.XConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultScanning, Property=X, Factor=1, Constant=0}"
+                        RelativeLayout.YConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_defaultScanning, Property=Y, Factor=1, Constant=0}"
+                    />
+                    <Image x:Name="_defaultLogoImage" HorizontalOptions="Center" VerticalOptions="Center" Margin="20" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_large.png}" 
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=0}"
+                    />
+                </RelativeLayout>
             </Grid>
 
             <Grid x:Name="_couponListContainerGrid" Opacity="0">
@@ -34,7 +51,24 @@
                         </Grid>
                     </ListView.Header>
                 </ListView>
-                <Image x:Name="_bottomLogoImage" Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center" Margin="3" TranslationY="110" Opacity="0" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_medium.png}" />
+                <RelativeLayout Grid.Row="1">
+                    <WebView x:Name="_bottomScanning" IsEnabled="False" Opacity="0"
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomLogoImage, Property=Width, Factor=0.3, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomLogoImage, Property=Height, Factor=1, Constant=0}"
+                        RelativeLayout.XConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomLogoImage, Property=X, Factor=1, Constant=0}"
+                        RelativeLayout.YConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomLogoImage, Property=Y, Factor=1, Constant=0}"
+                    />
+                    <BoxView x:Name="_bottomScanningTransparentLayer" Opacity="0" Color="White"
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomScanning, Property=Width, Factor=1, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomScanning, Property=Height, Factor=1, Constant=0}"
+                        RelativeLayout.XConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomScanning, Property=X, Factor=1, Constant=0}"
+                        RelativeLayout.YConstraint = "{ConstraintExpression Type=RelativeToView, ElementName=_bottomScanning, Property=Y, Factor=1, Constant=0}"
+                    />
+                    <Image x:Name="_bottomLogoImage" HorizontalOptions="Center" VerticalOptions="Center" Margin="3" TranslationY="110" Opacity="0" Source="{local:ImageResource HWC_UserApp.UserApp.MediaFiles.logo_hwc_medium.png}"
+                        RelativeLayout.WidthConstraint = "{ConstraintExpression Type=RelativeToParent, Property=Width, Factor=1, Constant=0}"
+                        RelativeLayout.HeightConstraint = "{ConstraintExpression Type=RelativeToParent, Property=Height, Factor=1, Constant=0}"
+                    />
+                </RelativeLayout>
             </Grid>
 
         </Grid>

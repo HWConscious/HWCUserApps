@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using OpenNETCF.IoC;
 using UniversalBeacon.Library.Core.Entities;
 using UniversalBeacon.Library.Core.Interfaces;
+using UniversalBeacon.Library.Core.Interop;
 
 namespace HWC_UserApp.UserApp.Models
 {
@@ -16,6 +17,8 @@ namespace HWC_UserApp.UserApp.Models
         private readonly BeaconManager _beaconManager;
 
         public ObservableCollection<Beacon> Beacons => _beaconManager?.BluetoothBeacons;
+        public event EventHandler BeaconScanningStarted;
+        public event EventHandler<BTError> BeaconScanningStopped;
 
         #endregion
 
@@ -31,7 +34,7 @@ namespace HWC_UserApp.UserApp.Models
                 // Construct & start the bluetooth beacon manager,
                 // giving it an invoker to marshal collection changes to the UI thread
                 _beaconManager = new BeaconManager(provider, Device.BeginInvokeOnMainThread);
-                _beaconManager.Start();
+                provider.WatcherStopped += Provider_WatcherStopped;
             }
             else
             {
@@ -39,9 +42,25 @@ namespace HWC_UserApp.UserApp.Models
             }
         }
 
-        public void Dispose()
+        private void Provider_WatcherStopped(object sender, BTError e)
+        {
+            BeaconScanningStopped?.Invoke(this, e);
+        }
+
+        public void WatcherStart()
+        {
+            _beaconManager?.Start();
+            BeaconScanningStarted?.Invoke(this, null);
+        }
+
+        public void WatcherStop()
         {
             _beaconManager?.Stop();
+        }
+
+        public void Dispose()
+        {
+            WatcherStop();
         }
 
         #endregion
