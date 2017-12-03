@@ -11,7 +11,6 @@ using HWC_UserApp.UserApp.Models;
 using Newtonsoft.Json;
 using OpenNETCF.IoC;
 using UniversalBeacon.Library.Core.Entities;
-using UniversalBeacon.Library.Core.Interfaces;
 using UniversalBeacon.Library.Core.Interop;
 
 namespace HWC_UserApp.ViewModels
@@ -23,12 +22,15 @@ namespace HWC_UserApp.ViewModels
         private long? _userID { get; set; }
         private RestClient _userLocationRestClient { get; set; }
         private BeaconService _beaconService { get; set; }
-        private IBluetoothPacketProvider _bluetoothPacketProvider { get; set; }
-        private readonly bool _isSimulateBeaconData = true;
+
+        private readonly bool _isSimulateBeaconData = false;
         private readonly bool _isSimulateCouponData = false;
         
-        public ObservableCollection<Beacon> Beacons => _beaconService?.Beacons;
         public ObservableCollection<Coupon> ReceivedCoupons { get; set; } = new ObservableCollection<Coupon>();
+        public event EventHandler BeaconScanningStarted;
+        public event EventHandler<BTError> BeaconScanningStopped;
+        public event EventHandler<Beacon> BeaconDetected;
+        public event EventHandler BeaconNotDetected;
         public event EventHandler<NewCouponReceivedEventArgs> NewCouponReceived;
 
         #endregion
@@ -36,7 +38,7 @@ namespace HWC_UserApp.ViewModels
         #region Initialize
 
         public HomeViewModel()
-        {    
+        {
             if (FetchUserID() && RestClientInitialize() && BeaconServiceInitialize())
             {
                 PingTimerInitializeAsync();
@@ -88,11 +90,13 @@ namespace HWC_UserApp.ViewModels
                 try
                 {
                     _beaconService = RootWorkItem.Services.AddNew<BeaconService>();
+                    _beaconService.BeaconScanningStarted += BeaconService_BeaconScanningStarted;
+                    _beaconService.BeaconScanningStopped += BeaconService_BeaconScanningStopped;
                     _beaconService.Beacons.CollectionChanged += Beacons_CollectionChanged;
-
-                    _bluetoothPacketProvider = RootWorkItem.Services.Get<IBluetoothPacketProvider>();
-
+                    
+                    _beaconService.WatcherStart();
                     Utility.DebugLog("Beacon service started...");
+
                     return true;
                 }
                 catch (Exception ex)
@@ -116,7 +120,7 @@ namespace HWC_UserApp.ViewModels
             while (true)
             {
                 // Add a sample Beacon to Beacon list (for debugging purpose; when real Beacon device not available)
-                if (_isSimulateBeaconData) { Beacons?.Add(GetAMockProximityBeacon()); }
+                if (_isSimulateBeaconData) { _beaconService?.Beacons?.Clear(); _beaconService?.Beacons?.Add(GetAMockProximityBeacon()); }
 
                 // Invoke the streaming action
                 StreamUserLocation();
@@ -133,14 +137,14 @@ namespace HWC_UserApp.ViewModels
         // Stream user location
         private void StreamUserLocation()
         {
-            _bluetoothPacketProvider.Start();
+            _beaconService.WatcherStart();
 
             Utility.DebugLog("Streaming location...");
             try
             {
-                if (Beacons?.Any() ?? false)
+                if (_beaconService?.Beacons?.Any() ?? false)
                 {
-                    foreach (var beacon in Beacons)
+                    foreach (var beacon in _beaconService?.Beacons)
                     {
                         if (beacon?.BeaconType == Beacon.BeaconTypeEnum.iBeacon)
                         {
@@ -148,6 +152,8 @@ namespace HWC_UserApp.ViewModels
                             {
                                 if (!string.IsNullOrEmpty(beaconFrame.UuidAsString))
                                 {
+                                    BeaconDetected?.Invoke(this, beacon);
+
                                     Utility.DebugLog("Sending UUID: " + beaconFrame.UuidAsString + " (detected at: " + beacon.Timestamp + ")");
                                     PushUserLocationAsync(beaconFrame.UuidAsString);
                                 }
@@ -169,6 +175,7 @@ namespace HWC_UserApp.ViewModels
                 }
                 else
                 {
+                    BeaconNotDetected?.Invoke(this, null);
                     Utility.DebugLog("Sending cancelled: No Beacon found");
                 }
             }
@@ -179,9 +186,9 @@ namespace HWC_UserApp.ViewModels
 
             try
             {
-                if (Beacons?.Count > 0)
+                if (_beaconService?.Beacons?.Count > 0)
                 {
-                    Beacons?.Clear();
+                    _beaconService?.Beacons?.Clear();
                 }
             }
             catch (Exception ex)
@@ -250,10 +257,14 @@ namespace HWC_UserApp.ViewModels
         
         private Beacon GetAMockProximityBeacon()
         {
-            // Create a mock iBeacon
+            // Create a mock iBeacon for following data
+            // iBeacon UUID: 22222222-2222-2222-2222-222222222222
+            // BT Address: 102417395151378 => 5D:25:E8:74:F2:12
+            // Tx Power: -62
+            // Frame Payload: 2, 21, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 0, 0, 0, 0, 191
             BLEAdvertisementPacket packet = new BLEAdvertisementPacket()
             {
-                BluetoothAddress = 73699147514185,
+                BluetoothAddress = 102417395151378,
                 RawSignalStrengthInDBm = -62,
                 Timestamp = DateTime.Now
             };
@@ -261,7 +272,7 @@ namespace HWC_UserApp.ViewModels
             beacon.BeaconType = Beacon.BeaconTypeEnum.iBeacon;
             beacon.BeaconFrames = new ObservableCollection<BeaconFrameBase>()
             {
-                new ProximityBeaconFrame(new byte[] { 2, 21, 91, 240, 232, 154, 87, 96, 74, 157, 187, 138, 122, 137, 92, 156, 153, 178, 0, 1, 0, 0, 191 })
+                new ProximityBeaconFrame(new byte[] { 2, 21, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 0, 0, 0, 0, 191 })
             };
 
             return beacon;
@@ -272,9 +283,19 @@ namespace HWC_UserApp.ViewModels
             // Return a list of mock Coupons
             return new List<Coupon>()
             {
-                new Coupon() { CouponID = 2, ClientSpotID = 1, NotificationID = 2, Name = "Doughnut Coupon", CouponCode = "09876543210", Description = "SAVE $1.99", DiscountCents = 199.0 },
-                new Coupon() { CouponID = 3, ClientSpotID = 1, NotificationID = 3, Name = "Croissant Coupon", CouponCode = "92186293264", Description = "SAVE $0.49", DiscountCents = 49.0 }
+                new Coupon() { CouponID = 2, ClientSpotID = 1, NotificationID = 3, Name = "Doughnut Coupon", CouponCode = "09876543210", Description = "SAVE $1.99", DiscountCents = 199.0 },
+                new Coupon() { CouponID = 3, ClientSpotID = 1, NotificationID = 4, Name = "Croissant Coupon", CouponCode = "92186293264", Description = "SAVE $0.49", DiscountCents = 49.0 }
             };
+        }
+
+        private void BeaconService_BeaconScanningStarted(object sender, EventArgs e)
+        {
+            BeaconScanningStarted?.Invoke(this, e);
+        }
+
+        private void BeaconService_BeaconScanningStopped(object sender, BTError e)
+        {
+            BeaconScanningStopped?.Invoke(this, e);
         }
 
         private void Beacons_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -282,16 +303,16 @@ namespace HWC_UserApp.ViewModels
             //switch (e.Action)
             //{
             //    case NotifyCollectionChangedAction.Add:
-            //        //DebugLog("Beacons CollectionChanged: Added");
+            //        //Utility.DebugLog("Beacons CollectionChanged: Added");
             //        break;
             //    case NotifyCollectionChangedAction.Remove:
-            //        //DebugLog("Beacons CollectionChanged: Removed");
+            //        //Utility.DebugLog("Beacons CollectionChanged: Removed");
             //        break;
             //    case NotifyCollectionChangedAction.Reset:
-            //        //DebugLog("Beacons CollectionChanged: Reset");
+            //        //Utility.DebugLog("Beacons CollectionChanged: Reset");
             //        break;
             //    default:
-            //        DebugLog("Beacons CollectionChanged: Other");
+            //        //Utility.DebugLog("Beacons CollectionChanged: Other");
             //        break;
             //}
         }
